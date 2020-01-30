@@ -1,0 +1,38 @@
+/**
+ *
+ * Add additional classes for widgets
+ * to build rows and columns
+ *
+ */
+function teletype_widgets_params($params) {
+
+	// global a counter array
+	global $widget_num;
+
+	if ( ! $widget_num ) {
+        $widget_num = array();
+    }
+
+    $sidebar_id = $params[0]['id'];
+
+    if ( $sidebar_id ) {
+
+	    /* See if the counter array has an entry for this sidebar */
+	    if (isset($widget_num[$sidebar_id])) {
+	        $widget_num[$sidebar_id]++;
+	    } else {
+	        $widget_num[$sidebar_id] = 1;
+	    }
+	    /* Add a widget number class for additional styling options */
+	    $num_class = 'widget-' . $widget_num[$sidebar_id] . ' ';
+
+        $total_widgets = wp_get_sidebars_widgets();
+        $sidebar_widgets = count($total_widgets[$sidebar_id]);
+
+        $params[0]['before_widget'] = str_replace('class="', 'class="span_' . floor(12 / $sidebar_widgets) . $num_class, $params[0]['before_widget']);
+
+    }
+
+    return $params;
+}
+add_filter('dynamic_sidebar_params','teletype_widgets_params');
